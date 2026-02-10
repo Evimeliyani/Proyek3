@@ -9,7 +9,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            
+            DummyQuizResultSeeder::class,
             QuizSeeder::class,
             QuestionSeeder::class,
         ]);
