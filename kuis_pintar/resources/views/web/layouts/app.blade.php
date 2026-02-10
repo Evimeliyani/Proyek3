@@ -72,7 +72,7 @@
             gap: 8px;
             margin-top: 6px;
         }
-        .nav a, .nav button{
+        .nav a, .nav button, .nav summary{
             display:flex;
             align-items:center;
             gap: 12px;
@@ -87,11 +87,11 @@
             font-size: 16px;
             font-weight: 700;
         }
-        .nav a.active{
+        .nav a.active, .nav summary.active{
             background: var(--sidebar-soft);
             box-shadow: inset 0 0 0 2px rgba(255,255,255,.35);
         }
-        .nav a:hover, .nav button:hover{ background: rgba(255,255,255,.25); }
+        .nav a:hover, .nav button:hover, .nav summary:hover{ background: rgba(255,255,255,.25); }
         .nav .ico{ width: 30px; text-align:center; font-size: 18px; }
         .spacer{ flex:1; }
 
@@ -156,6 +156,46 @@
 
             .content{ padding: 16px 14px; }
         }
+
+        /* ===== DROPDOWN (TUGAS SISWA) TANPA JS ===== */
+        details.dd-wrap summary { list-style: none; }
+        details.dd-wrap summary::-webkit-details-marker { display:none; }
+
+        .dd-wrap{ margin:0; padding:0; }
+        .dd-summary{
+            /* sudah ikut style .nav summary */
+            user-select:none;
+        }
+        .dd-caret{
+            margin-left:auto;
+            font-weight:900;
+            transition: transform .15s ease;
+        }
+        details.dd-wrap[open] .dd-caret{ transform: rotate(180deg); }
+
+        .dd-menu{
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+            margin-left:42px;
+            margin-top:6px;
+            margin-bottom:6px;
+        }
+        .dd-menu a{
+            padding:10px 12px;
+            border-radius:12px;
+            font-size:15px;
+            font-weight:800;
+            background: rgba(255,255,255,.18);
+        }
+        .dd-menu a:hover{ background: rgba(255,255,255,.28); }
+
+        /* override kalau ada class .active dari tempat lain (misal jadi hijau) */
+        .nav a.active, .nav summary.active, .dd-menu a.active{
+            background: var(--sidebar-soft) !important;
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,.35) !important;
+            color:#111 !important;
+        }
     </style>
 
     @yield('styles')
@@ -183,19 +223,39 @@
                     <span class="ico">🏠</span> Dashboard
                 </a>
 
-                {{-- Supaya tidak error route: pakai url biasa --}}
-                <a class="{{ request()->is('quiz*') ? 'active' : '' }}"
-                   href="{{ url('/quiz') }}">
+                <a class="{{ request()->routeIs('web.quiz.*') ? 'active' : '' }}"
+                   href="{{ route('web.quiz.index') }}">
                     <span class="ico">📝</span> Quiz
                 </a>
 
-                <a href="#" onclick="alert('Menu Grafik belum dibuat'); return false;">
+                <a class="{{ request()->routeIs('web.grafik.*') ? 'active' : '' }}"
+                   href="{{ route('web.grafik.index') }}">
                     <span class="ico">📈</span> Grafik
                 </a>
 
-                <a href="#" onclick="alert('Menu Tugas Siswa belum dibuat'); return false;">
-                    <span class="ico">📷</span> Tugas Siswa
-                </a>
+                {{-- DROPDOWN TUGAS SISWA (NO JS) --}}
+                @php
+                    $tugasOpen = request()->is('tugas-siswa*') || request()->routeIs('web.tugas.*');
+                @endphp
+
+                <details class="dd-wrap" {{ $tugasOpen ? 'open' : '' }}>
+                    <summary class="dd-summary {{ $tugasOpen ? 'active' : '' }}">
+                        <span class="ico">📷</span> Tugas Siswa
+                        <span class="dd-caret">▾</span>
+                    </summary>
+
+                    <div class="dd-menu">
+                        <a class="{{ request()->routeIs('web.tugas.create') ? 'active' : '' }}"
+                           href="{{ route('web.tugas.create') }}">
+                            <span class="ico">📝</span> Buat Tugas
+                        </a>
+
+                        <a class="{{ request()->routeIs('web.tugas.masuk') ? 'active' : '' }}"
+                           href="{{ route('web.tugas.masuk') }}">
+                            <span class="ico">📥</span> Tugas Masuk
+                        </a>
+                    </div>
+                </details>
 
                 <div class="spacer"></div>
 
@@ -225,7 +285,15 @@
         });
         sidebarOverlay?.addEventListener('click', closeSidebar);
 
+        // close sidebar on mobile when click links
         document.querySelectorAll('.sidebar a').forEach(a => {
+            a.addEventListener('click', () => {
+                if(window.innerWidth <= 860) closeSidebar();
+            });
+        });
+
+        // close sidebar on mobile when click dropdown links
+        document.querySelectorAll('.dd-menu a').forEach(a => {
             a.addEventListener('click', () => {
                 if(window.innerWidth <= 860) closeSidebar();
             });
