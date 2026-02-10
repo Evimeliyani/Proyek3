@@ -35,7 +35,7 @@ return [
         ],
     ],
         'openai' => [
-        'key' => env('REMOVED6qIebpEQVj5zt90UrSL2P_3d1gx1XC-hCIrEgagN187ebZvLbDkNXAG_8EqEMdJrDzMg5nG7EaT3BlbkFJJKbI0uDGfzTq9HaoAS_38ghSVHrppFEd2bWU8FK2qeS6hm7JFZj9rFdFo5HoUxk8UBzEcnzL0AOPENAI_API_KEY'),
+        'key' => env('OPENAI_API_KEY'),
         'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
     ],
 ];
