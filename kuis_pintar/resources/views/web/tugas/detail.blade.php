@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('web.layouts.app')
 
 @section('title','Detail Tugas')
 @section('topbar_title','Detail Tugas')
