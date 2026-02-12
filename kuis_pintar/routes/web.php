@@ -8,9 +8,11 @@ use App\Http\Controllers\Web\QuestionController;
 use App\Http\Controllers\Web\TugasController;
 use App\Http\Controllers\Web\GrafikController;
 
-Route::middleware(['auth'])->prefix('web')->name('web.')->group(function () {
+Route::prefix('web')->name('web.')->group(function () {
     Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
+    Route::get('/grafik/{user}', [GrafikController::class, 'show'])->name('grafik.show');
 });
+
 Route::middleware(['auth'])->prefix('tugas-siswa')->name('web.tugas.')->group(function () {
     // Buat Tugas
     Route::get('/buat', [TugasController::class, 'indexBuat'])->name('create');

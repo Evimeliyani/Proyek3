@@ -17,26 +17,27 @@
     </a>
 
     {{-- Grafik --}}
-    <a class="{{ request()->routeIs('web.grafik.*') ? 'active' : '' }}"
+    <a class="{{ request()->is('grafik*') ? 'active' : '' }}"
        href="{{ route('web.grafik.index') }}">
         <span class="ico">📈</span> Grafik
     </a>
 
-    {{-- ===== DROPDOWN TUGAS SISWA ===== --}}
+    {{-- DROPDOWN: Tugas Siswa --}}
     @php
+        // aktif jika berada di halaman tugas siswa
         $tugasOpen = request()->is('tugas-siswa*') || request()->routeIs('web.tugas.*');
     @endphp
 
     <button type="button"
             class="{{ $tugasOpen ? 'active' : '' }}"
-            id="btnTugasDropdown">
+            data-dd="tugas">
         <span class="ico">📷</span> Tugas Siswa
-        <span style="margin-left:auto;font-size:14px" id="iconTugas">
+        <span style="margin-left:auto; font-size:14px;" id="ddIconTugas">
             {{ $tugasOpen ? '▲' : '▼' }}
         </span>
     </button>
 
-    <div class="dropdown-menu {{ $tugasOpen ? 'open' : '' }}" id="menuTugas">
+    <div class="dd {{ $tugasOpen ? 'open' : '' }}" id="ddTugas">
         <a class="{{ request()->routeIs('web.tugas.create') ? 'active' : '' }}"
            href="{{ route('web.tugas.create') }}">
             <span class="ico">📝</span> Buat Tugas
@@ -59,44 +60,44 @@
     </form>
 </nav>
 
-{{-- ===== STYLE DROPDOWN ===== --}}
+{{-- STYLE DROPDOWN (biar konsisten sama sidebar app.php) --}}
 <style>
-    .dropdown-menu{
+    .dd{
         display:none;
         flex-direction:column;
-        gap:6px;
-        margin-left:42px;
-        margin-top:6px;
-        margin-bottom:6px;
+        gap: 6px;
+        margin-left: 42px; /* indent ke kanan (mirip dropdown desain kamu) */
+        margin-top: 6px;
+        margin-bottom: 6px;
     }
-    .dropdown-menu.open{
-        display:flex;
+    .dd.open{ display:flex; }
+
+    .dd a{
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 800;
+        background: rgba(255,255,255,.18);
     }
-    .dropdown-menu a{
-        padding:10px 12px;
-        border-radius:12px;
-        font-size:15px;
-        font-weight:700;
-        background: rgba(255,255,255,.25);
-        text-decoration:none;
+    .dd a:hover{
+        background: rgba(255,255,255,.28);
     }
-    .dropdown-menu a:hover{
-        background: rgba(255,255,255,.35);
+    .dd a.active{
+        background: rgba(255,255,255,.45);
+        box-shadow: inset 0 0 0 2px rgba(255,255,255,.35);
     }
 </style>
 
-{{-- ===== SCRIPT DROPDOWN ===== --}}
+{{-- SCRIPT DROPDOWN --}}
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('btnTugasDropdown');
-    const menu = document.getElementById('menuTugas');
-    const icon = document.getElementById('iconTugas');
+    // toggle dropdown tugas
+    document.querySelectorAll('[data-dd="tugas"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const dd = document.getElementById('ddTugas');
+            const icon = document.getElementById('ddIconTugas');
 
-    if(!btn || !menu || !icon) return;
-
-    btn.addEventListener('click', () => {
-        menu.classList.toggle('open');
-        icon.textContent = menu.classList.contains('open') ? '▲' : '▼';
+            dd.classList.toggle('open');
+            icon.textContent = dd.classList.contains('open') ? '▲' : '▼';
+        });
     });
-});
 </script>
