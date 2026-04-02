@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login - Kuis Pintar</title>
+
     <style>
         body{
             margin:0;
@@ -22,11 +23,27 @@
             box-shadow: 0 14px 30px rgba(0,0,0,0.25);
             text-align:center;
         }
-        .logo{ font-size:46px; margin-bottom:10px; }
-        h1{ margin:0; font-size:34px; }
-        .spark{ font-size:20px; vertical-align:middle; }
-        .form{ text-align:left; margin-top:22px; }
-        label{ display:block; margin-top:18px; font-size:18px; }
+        .logo{
+            font-size:46px;
+            margin-bottom:10px;
+        }
+        h1{
+            margin:0;
+            font-size:34px;
+        }
+        .spark{
+            font-size:20px;
+            vertical-align:middle;
+        }
+        .form{
+            text-align:left;
+            margin-top:22px;
+        }
+        label{
+            display:block;
+            margin-top:18px;
+            font-size:18px;
+        }
         input{
             width:100%;
             margin-top:10px;
@@ -47,45 +64,74 @@
             border-radius:14px;
             font-size:22px;
             cursor:pointer;
+            transition:0.2s;
         }
-        .btn:hover{ filter:brightness(0.95); }
+        .btn:hover{
+            filter:brightness(0.95);
+        }
         .alert{
-            margin-top:12px;
+            margin-top:14px;
             padding:12px 14px;
             border-radius:12px;
             font-size:14px;
         }
-        .alert-error{ background:#ffd9d9; color:#7b0000; }
-        .alert-success{ background:#d9ffdf; color:#0f5b1b; }
+        .alert-error{
+            background:#ffd9d9;
+            color:#7b0000;
+        }
+        .alert-success{
+            background:#d9ffdf;
+            color:#0f5b1b;
+        }
     </style>
 </head>
 <body>
 
 <div class="card">
+
     <div class="logo">📖</div>
     <h1>Selamat Datang <span class="spark">✨</span></h1>
 
-    @if(session('error'))
-        <div class="alert alert-error">{{ session('error') }}</div>
-    @endif
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+    {{-- ERROR VALIDASI --}}
+    @if ($errors->any())
+        <div class="alert alert-error">
+            <ul style="margin:0; padding-left:18px;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
     @endif
 
-    <form class="form" method="POST" action="{{ route('web.login.submit') }}">
+    {{-- SUCCESS MESSAGE --}}
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <form class="form" method="POST" action="/login">
         @csrf
 
-        {{-- penting: API kamu butuh client --}}
-        <input type="hidden" name="client" value="web">
+        {{-- WAJIB karena sistem kamu pakai client validation --}}
+        <input type="hidden" name="client" value="web_guru">
 
         <label>Email</label>
-        <input type="email" name="email" value="{{ old('email') }}" required>
+        <input type="email"
+               name="email"
+               value="{{ old('email') }}"
+               required>
 
         <label>Password</label>
-        <input type="password" name="password" required>
+        <input type="password"
+               name="password"
+               required>
 
-        <button class="btn" type="submit">Login</button>
+        <button class="btn" type="submit">
+            Login
+        </button>
     </form>
+
 </div>
 
 </body>

@@ -11,12 +11,21 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function ($middleware) {
-         $middleware->alias([
-        'web.auth' => \App\Http\Middleware\WebTokenAuth::class,
-            ]);
-        })
+    ->withMiddleware(function (Middleware $middleware) {
 
+        // ✅ INI YANG BENAR: exclude CSRF untuk endpoint login (biar Postman/Flutter tidak 419)
+        $middleware->validateCsrfTokens(except: [
+            'login',
+            'login/*',
+        ]);
+
+        // (opsional) kalau kamu memang butuh alias middleware lain, taruh di sini
+        // $middleware->alias([
+        //     'something' => \App\Http\Middleware\Something::class,
+        // ]);
+
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();

@@ -25,6 +25,7 @@ Route::middleware(['auth'])->prefix('tugas-siswa')->name('web.tugas.')->group(fu
     Route::get('/masuk/{submission}', [TugasController::class, 'show'])->name('show');
 });
 
+// ===== LOGIN 1 ENDPOINT SAMA UNTUK WEB + MOBILE =====
 Route::get('/login', [AuthWebController::class, 'showLogin'])->name('web.login');
 Route::post('/login', [AuthWebController::class, 'submitLogin'])->name('web.login.submit');
 Route::post('/logout', [AuthWebController::class, 'logout'])->name('web.logout');
@@ -39,5 +40,4 @@ Route::middleware('auth')->group(function () {
     Route::post('/quiz/{slug}/questions', [QuestionController::class, 'store'])->name('web.quiz.questions.store');
     Route::put('/quiz/questions/{id}', [QuestionController::class, 'update'])->name('web.quiz.questions.update');
     Route::delete('/quiz/questions/{id}', [QuestionController::class, 'destroy'])->name('web.quiz.questions.destroy');
-
 });

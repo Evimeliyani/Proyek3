@@ -5,55 +5,91 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use Illuminate\Validation\ValidationException;
 
 class AuthWebController extends Controller
 {
-    // GET /login
     public function showLogin()
     {
+        // sesuaikan view kamu
         return view('web.login');
     }
 
-    // POST /login
     public function submitLogin(Request $request)
     {
         $data = $request->validate([
-            'email' => ['required','email'],
-            'password' => ['required'],
+            'client'   => ['required', 'in:web_guru,mobile_siswa'],
+            'email'    => ['required', 'email'],
+            'password' => ['required', 'string', 'min:6'],
         ]);
 
-        $user = User::where('email', $data['email'])->first();
+        if (!Auth::attempt(['email' => $data['email'], 'password' => $data['password']])) {
+            if ($request->expectsJson()) {
+                throw ValidationException::withMessages([
+                    'email' => ['Email atau password salah.'],
+                ]);
+            }
 
-        if (!$user || !Hash::check($data['password'], $user->password)) {
-            return back()->with('error', 'Email atau password salah')->withInput();
+            return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
         }
 
-        // WEB hanya guru/admin
-        if (!in_array($user->role, ['guru','admin'], true)) {
-            return back()->with('error', 'Akun ini bukan guru/admin')->withInput();
-        }
-
-        // login session (WEB)
-        Auth::login($user);
         $request->session()->regenerate();
+        $user = Auth::user();
 
-        // OPTIONAL: kalau kamu butuh token untuk panggil API dari web (misal pakai JS fetch)
-        // $user->tokens()->where('name','web')->delete();
-        // $token = $user->createToken('web')->plainTextToken;
-        // session(['api_token' => $token]);
+        // RULE 1: mobile hanya siswa
+        if ($data['client'] === 'mobile_siswa' && $user->role !== 'siswa') {
+            Auth::logout();
 
+            if ($request->expectsJson()) {
+                throw ValidationException::withMessages([
+                    'client' => ['Akun ini bukan akun siswa untuk mobile.'],
+                ]);
+            }
+
+            return back()->withErrors(['client' => 'Akun ini bukan akun siswa untuk mobile.'])->withInput();
+        }
+
+        // RULE 2: web hanya guru/admin
+        if ($data['client'] === 'web_guru' && !in_array($user->role, ['guru', 'admin'])) {
+            Auth::logout();
+
+            if ($request->expectsJson()) {
+                throw ValidationException::withMessages([
+                    'client' => ['Akun ini bukan akun guru untuk web.'],
+                ]);
+            }
+
+            return back()->withErrors(['client' => 'Akun ini bukan akun guru untuk web.'])->withInput();
+        }
+
+        // Jika request JSON (Flutter/Postman) => return token
+        if ($request->expectsJson()) {
+            $token = $user->createToken($data['client'])->plainTextToken;
+
+            return response()->json([
+                'message' => 'Login sukses',
+                'token'   => $token,
+                'user'    => [
+                    'id'      => $user->id,
+                    'name'    => $user->name,
+                    'email'   => $user->email,
+                    'role'    => $user->role,
+                    'kelas'   => $user->kelas,
+                    'sekolah' => $user->sekolah,
+                ],
+            ]);
+        }
+
+        // Jika web browser => redirect
         return redirect()->route('web.dashboard');
     }
 
-    // POST /logout
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('web.login')->with('success', 'Logout berhasil');
+        return redirect()->route('web.login');
     }
 }
