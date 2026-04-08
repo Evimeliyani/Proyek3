@@ -3,7 +3,7 @@ import '../../core/token_storage.dart';
 import '../../services/auth_service.dart';
 import '../widgets/auth_background.dart';
 import 'register_siswa_page.dart';
-import '../home/home_siswa_page.dart';
+import '../home/home_page.dart';
 
 class LoginSiswaPage extends StatefulWidget {
   const LoginSiswaPage({super.key});
@@ -42,7 +42,7 @@ class _LoginSiswaPageState extends State<LoginSiswaPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomeSiswaPage()),
+        MaterialPageRoute(builder: (_) => const HomePage()),
       );
     } catch (e) {
       if (!mounted) return;

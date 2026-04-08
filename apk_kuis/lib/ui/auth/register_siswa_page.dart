@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/token_storage.dart';
 import '../../services/auth_service.dart';
 import '../widgets/auth_background.dart';
-import '../home/home_siswa_page.dart';
+import '../home/home_page.dart';
 
 class RegisterSiswaPage extends StatefulWidget {
   const RegisterSiswaPage({super.key});
@@ -50,7 +50,7 @@ class _RegisterSiswaPageState extends State<RegisterSiswaPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomeSiswaPage()),
+        MaterialPageRoute(builder: (_) => const HomePage()),
       );
     } catch (e) {
       if (!mounted) return;
