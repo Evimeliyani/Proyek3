@@ -26,7 +26,7 @@ class AuthMobileController extends Controller
             'role'    => 'siswa',
             'kelas'   => $data['kelas'] ?? null,
             'sekolah' => $data['sekolah'] ?? null,
-            'password'=> Hash::make($data['password']), // HASH WAJIB
+            'password'=> Hash::make($data['password']),
         ]);
 
         $token = $user->createToken('mobile_siswa')->plainTextToken;
@@ -43,6 +43,40 @@ class AuthMobileController extends Controller
                 'sekolah' => $user->sekolah,
             ]
         ], 201);
+    }
+
+    public function login(Request $request)
+    {
+        $data = $request->validate([
+            'client'   => ['required', 'in:mobile_siswa'],
+            'email'    => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $user = User::where('email', $data['email'])
+            ->where('role', 'siswa')
+            ->first();
+
+        if (!$user || !Hash::check($data['password'], $user->password)) {
+            return response()->json([
+                'message' => 'Email atau password salah'
+            ], 401);
+        }
+
+        $token = $user->createToken('mobile_siswa')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login siswa sukses',
+            'token'   => $token,
+            'user'    => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'kelas' => $user->kelas,
+                'sekolah' => $user->sekolah,
+            ]
+        ], 200);
     }
 
     public function logout(Request $request)
