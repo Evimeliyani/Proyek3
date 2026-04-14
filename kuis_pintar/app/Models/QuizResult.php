@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class QuizResult extends Model
 {
-    protected $fillable = [
-        'user_id', 'kategori', 'score', 'taken_at',
-    ];
+    protected $table = 'quiz_results';
 
-    protected $casts = [
-        'taken_at' => 'datetime',
+    protected $fillable = [
+        'user_id',
+        'kategori',
+        'score',
+        'taken_at',
     ];
 }
