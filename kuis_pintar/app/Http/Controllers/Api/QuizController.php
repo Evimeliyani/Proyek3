@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\Question;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
@@ -23,6 +25,19 @@ class QuizController extends Controller
 
         return response()->json([
             'data' => $questions
+        ]);
+    }
+
+    public function history(Request $request)
+    {
+        $data = DB::table('quiz_results')
+            ->where('user_id', $request->user()->id)
+            ->select('kategori', 'score', 'taken_at')
+            ->orderBy('taken_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'data' => $data
         ]);
     }
 }
