@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/quiz_service.dart';
 import '../../services/user_service.dart';
 import '../quiz/detail_quiz_page.dart';
+import '../profile/profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -44,13 +45,38 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
+
     setState(() {
       _selectedIndex = index;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Halaman belum dibuat')),
-    );
+    switch (index) {
+      case 0:
+        break;
+      case 1:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Halaman quiz belum dibuat')),
+        );
+        break;
+      case 2:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Halaman tugas belum dibuat')),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const ProfilePage(),
+          ),
+        ).then((_) {
+          setState(() {
+            _selectedIndex = 0;
+          });
+        });
+        break;
+    }
   }
 
   /// HEADER TANPA TOMBOL BACK
