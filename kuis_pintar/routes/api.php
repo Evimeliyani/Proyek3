@@ -5,6 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthMobileController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\QuizResultController;
+use App\Http\Controllers\ProfilePhotoController;
+
+//upload profile
+Route::middleware('auth:sanctum')->post('/profile/photo', [ProfilePhotoController::class, 'upload']);
 
 Route::middleware('auth:sanctum')->get('/quiz-history', [QuizController::class, 'history']);
 /*

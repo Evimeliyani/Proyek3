@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../services/user_service.dart';
 import 'quiz_list_page.dart';
+import '../home/home_page.dart';
+import '../profile/profile_page.dart';
+import 'quiz_history_page.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key});
@@ -13,26 +16,40 @@ class _QuizPageState extends State<QuizPage> {
   int _selectedIndex = 1;
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
+  if (index == _selectedIndex) return;
 
-    switch (index) {
-      case 0:
-        Navigator.pop(context);
-        break;
-      case 1:
-        break;
-      case 2:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Halaman tugas belum dibuat')),
-        );
-        break;
-      case 3:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Halaman profil belum dibuat')),
-        );
-        break;
-    }
+  switch (index) {
+    case 0:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const HomePage(),
+        ),
+      );
+      break;
+
+    case 1:
+      break;
+
+    case 2:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const QuizHistoryPage(),
+        ),
+      );
+      break;
+
+    case 3:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const ProfilePage(),
+        ),
+      );
+      break;
   }
+}
 
   Widget _buildHeader(String sekolah) {
     return Container(
@@ -80,10 +97,10 @@ class _QuizPageState extends State<QuizPage> {
               ),
               const SizedBox(width: 10),
               const Icon(
-                Icons.auto_stories,
-                size: 42,
-                color: Color(0xFF2E2ED8),
-              ),
+              Icons.menu_book_rounded,
+              size: 58,
+              color: Color(0xFF2E2ED8),
+            ),
             ],
           ),
         ),

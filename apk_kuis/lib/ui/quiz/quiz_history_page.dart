@@ -3,6 +3,7 @@ import '../../services/quiz_history_service.dart';
 import '../../services/user_service.dart';
 import '../home/home_page.dart';
 import '../profile/profile_page.dart';
+import '../quiz/quiz_page.dart';
 
 class QuizHistoryPage extends StatefulWidget {
   const QuizHistoryPage({super.key});
@@ -16,7 +17,7 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
   List<dynamic> quizHistory = [];
   String schoolName = 'SDN I';
 
-  int _selectedIndex = 1;
+  int _selectedIndex = 2;
 
   @override
   void initState() {
@@ -97,16 +98,15 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
         break;
 
       case 1:
-        // tetap di halaman riwayat quiz
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const QuizPage(),
+          ),
+        );
         break;
 
       case 2:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Halaman Tugas belum dibuat')),
-        );
-        setState(() {
-          _selectedIndex = 1;
-        });
         break;
 
       case 3:
@@ -117,7 +117,7 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
           ),
         ).then((_) {
           setState(() {
-            _selectedIndex = 1;
+            _selectedIndex = 2;
           });
         });
         break;
