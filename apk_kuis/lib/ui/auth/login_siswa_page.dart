@@ -1,9 +1,10 @@
+import 'package:apk_kuis/ui/splash/login_success_page.dart';
 import 'package:flutter/material.dart';
 import '../../core/token_storage.dart';
 import '../../services/auth_service.dart';
 import '../widgets/auth_background.dart';
 import 'register_siswa_page.dart';
-import '../home/home_page.dart';
+import '../splash/login_success_page.dart';
 
 class LoginSiswaPage extends StatefulWidget {
   const LoginSiswaPage({super.key});
@@ -42,7 +43,7 @@ class _LoginSiswaPageState extends State<LoginSiswaPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+        MaterialPageRoute(builder: (_) => const MathLoadingPage()),
       );
     } catch (e) {
       if (!mounted) return;
