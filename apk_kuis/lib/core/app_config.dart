@@ -1,3 +1,3 @@
 class AppConfig {
-  static const String baseUrl = 'http://10.0.160.121:8000/api';
+  static const String baseUrl = 'http://10.0.173.150:8000/api';
 }

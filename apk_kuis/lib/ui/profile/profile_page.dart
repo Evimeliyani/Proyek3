@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/user_service.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -10,6 +12,19 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 3;
+
+  File? _image;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
 
   void _onItemTapped(int index) {
     if (index == _selectedIndex) return;
@@ -37,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  /// HEADER (SUDAH ADA TITLE PROFIL DI DALAM)
+  /// HEADER
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
@@ -103,16 +118,26 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           child: Column(
             children: [
-              const CircleAvatar(
-                radius: 42,
-                backgroundColor: Color(0xFFAFC2F2),
-                child: Icon(
-                  Icons.person,
-                  size: 50,
-                  color: Colors.black,
+              /// FOTO PROFILE (SUDAH BISA DIKLIK & PILIH GAMBAR)
+              GestureDetector(
+                onTap: _pickImage,
+                child: CircleAvatar(
+                  radius: 42,
+                  backgroundColor: const Color(0xFFAFC2F2),
+                  backgroundImage:
+                      _image != null ? FileImage(_image!) : null,
+                  child: _image == null
+                      ? const Icon(
+                          Icons.camera_alt,
+                          size: 30,
+                          color: Colors.black,
+                        )
+                      : null,
                 ),
               ),
+
               const SizedBox(height: 18),
+
               Text(
                 name,
                 textAlign: TextAlign.center,
@@ -122,6 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Colors.black,
                 ),
               ),
+
               const SizedBox(height: 24),
               _buildProfileItem('Email', email),
               _buildProfileItem('Role', role),
