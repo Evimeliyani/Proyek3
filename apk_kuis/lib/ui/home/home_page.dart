@@ -4,6 +4,7 @@ import '../../services/user_service.dart';
 import '../quiz/detail_quiz_page.dart';
 import '../quiz/quiz_history_page.dart';
 import '../profile/profile_page.dart';
+import '../quiz/quiz_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -57,18 +58,17 @@ class _HomePageState extends State<HomePage> {
         break;
 
       case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const QuizHistoryPage(),
-          ),
-        ).then((_) {
-          setState(() {
-            _selectedIndex = 0;
-          });
-        });
-        break;
-
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const QuizPage(),
+    ),
+  ).then((_) {
+    setState(() {
+      _selectedIndex = 0;
+    });
+  });
+  break;
       case 2:
         Navigator.push(
           context,
