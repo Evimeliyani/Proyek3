@@ -7,6 +7,7 @@ use App\Models\Quiz;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class QuizController extends Controller
 {
@@ -34,7 +35,18 @@ class QuizController extends Controller
             ->where('user_id', $request->user()->id)
             ->select('kategori', 'score', 'taken_at')
             ->orderBy('taken_at', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'kategori' => $item->kategori,
+                    'score' => $item->score,
+                    'taken_at' => $item->taken_at
+                        ? Carbon::parse($item->taken_at)
+                            ->timezone('Asia/Jakarta')
+                            ->format('H:i')
+                        : null,
+                ];
+            });
 
         return response()->json([
             'data' => $data

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/quiz_history_service.dart';
 import '../../services/user_service.dart';
 import '../home/home_page.dart';
+import '../profile/profile_page.dart';
 
 class QuizHistoryPage extends StatefulWidget {
   const QuizHistoryPage({super.key});
@@ -13,7 +14,7 @@ class QuizHistoryPage extends StatefulWidget {
 class _QuizHistoryPageState extends State<QuizHistoryPage> {
   bool isLoading = true;
   List<dynamic> quizHistory = [];
-  String schoolName = 'SDN I LOBENER';
+  String schoolName = 'SDN I';
 
   int _selectedIndex = 1;
 
@@ -32,11 +33,10 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
 
       final userData = results[0] as Map<String, dynamic>;
       final historyData = results[1] as List<dynamic>;
-
       final user = userData['user'] as Map<String, dynamic>;
 
       setState(() {
-        schoolName = user['sekolah']?.toString() ?? 'SDN I LOBENER';
+        schoolName = user['sekolah']?.toString() ?? 'SDN I';
         quizHistory = historyData;
         isLoading = false;
       });
@@ -86,23 +86,41 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
       _selectedIndex = index;
     });
 
-    if (index == 0) {
+    switch (index) {
+      case 0:
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => const HomePage(),
         ),
       );
-    } else if (index == 1) {
+        break;
+
+      case 1:
       // tetap di halaman riwayat quiz
-    } else if (index == 2) {
+        break;
+
+      case 2:
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Halaman Tugas belum dibuat')),
       );
-    } else if (index == 3) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Halaman Profil belum dibuat')),
-      );
+        setState(() {
+          _selectedIndex = 1;
+        });
+        break;
+
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const ProfilePage(),
+          ),
+        ).then((_) {
+          setState(() {
+            _selectedIndex = 1;
+          });
+        });
+        break;
     }
   }
 
@@ -129,25 +147,6 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
           padding: const EdgeInsets.fromLTRB(22, 20, 22, 18),
           child: Row(
             children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.black87, width: 2),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_back,
-                    size: 20,
-                    color: Colors.black87,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   sekolah,

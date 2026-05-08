@@ -38,7 +38,7 @@ class QuizHistoryService {
 
       return [];
     } else {
-      throw Exception('Gagal mengambil riwayat quiz');
+      throw Exception('Status ${res.statusCode}: ${res.body}');
     }
   }
 }
