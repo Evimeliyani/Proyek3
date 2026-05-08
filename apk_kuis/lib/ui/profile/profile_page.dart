@@ -20,52 +20,76 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+    );
 
     if (pickedFile != null) {
+      final file = File(pickedFile.path);
+
       setState(() {
-        _image = File(pickedFile.path);
+        _image = file;
       });
+
+      try {
+        await UserService.uploadProfilePhoto(file);
+
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Foto profil berhasil disimpan'),
+          ),
+        );
+      } catch (e) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal upload foto: $e'),
+          ),
+        );
+      }
     }
   }
 
   void _onItemTapped(int index) {
-  if (index == _selectedIndex) return;
+    if (index == _selectedIndex) return;
 
-  switch (index) {
-    case 0:
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const HomePage(),
-        ),
-      );
-      break;
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const HomePage(),
+          ),
+        );
+        break;
 
-    case 1:
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const QuizPage(),
-        ),
-      );
-      break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const QuizPage(),
+          ),
+        );
+        break;
 
-    case 2:
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const QuizHistoryPage(),
-        ),
-      );
-      break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const QuizHistoryPage(),
+          ),
+        );
+        break;
 
-    case 3:
-      break;
+      case 3:
+        break;
+    }
   }
-}
 
-  /// HEADER
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
@@ -131,7 +155,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           child: Column(
             children: [
-              /// FOTO PROFILE (SUDAH BISA DIKLIK & PILIH GAMBAR)
               GestureDetector(
                 onTap: _pickImage,
                 child: CircleAvatar(
@@ -162,6 +185,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
 
               const SizedBox(height: 24),
+
               _buildProfileItem('Email', email),
               _buildProfileItem('Role', role),
               _buildProfileItem('Kelas', kelas),
