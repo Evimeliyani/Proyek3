@@ -7,6 +7,10 @@ use App\Http\Controllers\Web\QuizController;
 use App\Http\Controllers\Web\QuestionController;
 use App\Http\Controllers\Web\TugasController;
 use App\Http\Controllers\Web\GrafikController;
+use App\Http\Controllers\QuizResultController;
+
+Route::get('/quiz-result', [QuizResultController::class, 'index'])
+    ->name('quiz.result');
 
 Route::prefix('web')->name('web.')->group(function () {
     Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
