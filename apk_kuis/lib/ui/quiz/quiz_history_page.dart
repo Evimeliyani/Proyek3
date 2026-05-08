@@ -88,22 +88,22 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
 
     switch (index) {
       case 0:
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const HomePage(),
-        ),
-      );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const HomePage(),
+          ),
+        );
         break;
 
       case 1:
-      // tetap di halaman riwayat quiz
+        // tetap di halaman riwayat quiz
         break;
 
       case 2:
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Halaman Tugas belum dibuat')),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Halaman Tugas belum dibuat')),
+        );
         setState(() {
           _selectedIndex = 1;
         });

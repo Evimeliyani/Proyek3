@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/quiz_service.dart';
 import '../../services/user_service.dart';
 import '../quiz/detail_quiz_page.dart';
+import '../quiz/quiz_history_page.dart';
 import '../profile/profile_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -54,16 +55,33 @@ class _HomePageState extends State<HomePage> {
     switch (index) {
       case 0:
         break;
+
       case 1:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Halaman quiz belum dibuat')),
-        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const QuizHistoryPage(),
+          ),
+        ).then((_) {
+          setState(() {
+            _selectedIndex = 0;
+          });
+        });
         break;
+
       case 2:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Halaman tugas belum dibuat')),
-        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const QuizHistoryPage(),
+          ),
+        ).then((_) {
+          setState(() {
+            _selectedIndex = 0;
+          });
+        });
         break;
+
       case 3:
         Navigator.push(
           context,
@@ -79,7 +97,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  /// HEADER TANPA TOMBOL BACK
   Widget _buildHeader(String sekolah) {
     return Container(
       width: double.infinity,
