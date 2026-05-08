@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../services/user_service.dart';
-import 'detail_quiz_page.dart';
 
 class QuizListPage extends StatefulWidget {
   final String categoryTitle;
@@ -100,19 +99,13 @@ class _QuizListPageState extends State<QuizListPage> {
   void _openCamera(int index) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Kamera ${widget.categoryTitle} ${index + 1} diklik'),
+        content: Text(
+          'Membuka kamera ${widget.categoryTitle} ${index + 1}',
+        ),
       ),
     );
 
-    // Nanti kalau sudah ada halaman kamera, arahkan di sini:
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (_) => CameraPage(
-    //       title: '${widget.categoryTitle} ${index + 1}',
-    //     ),
-    //   ),
-    // );
+    // nanti arahkan ke halaman kamera di sini
   }
 
   Widget _buildQuizCard(int index) {
@@ -120,62 +113,47 @@ class _QuizListPageState extends State<QuizListPage> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
-      child: Container(
-        width: double.infinity,
-        height: 70,
-        decoration: BoxDecoration(
-          color: colors[index],
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.black38),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 6,
-              offset: Offset(2, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(14),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => DetailQuizPage(
-                        quizId: index + 1,
-                        title: quizTitle,
-                      ),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 18),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      quizTitle,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: () => _openCamera(index),
+        child: Container(
+          width: double.infinity,
+          height: 70,
+          decoration: BoxDecoration(
+            color: colors[index],
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.black38),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(2, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const SizedBox(width: 18),
+
+              Expanded(
+                child: Text(
+                  quizTitle,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-            ),
-            IconButton(
-              onPressed: () => _openCamera(index),
-              icon: const Icon(
+
+              const Icon(
                 Icons.center_focus_strong_outlined,
                 size: 30,
                 color: Colors.black54,
               ),
-            ),
-            const SizedBox(width: 10),
-          ],
+
+              const SizedBox(width: 18),
+            ],
+          ),
         ),
       ),
     );

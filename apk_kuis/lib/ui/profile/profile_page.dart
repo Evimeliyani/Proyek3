@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../services/user_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import '../home/home_page.dart';
+import '../quiz/quiz_page.dart';
+import '../quiz/quiz_history_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -27,30 +30,40 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
+  if (index == _selectedIndex) return;
 
-    setState(() {
-      _selectedIndex = index;
-    });
+  switch (index) {
+    case 0:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const HomePage(),
+        ),
+      );
+      break;
 
-    switch (index) {
-      case 0:
-        Navigator.pop(context);
-        break;
-      case 1:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Halaman quiz belum dibuat')),
-        );
-        break;
-      case 2:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Halaman tugas belum dibuat')),
-        );
-        break;
-      case 3:
-        break;
-    }
+    case 1:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const QuizPage(),
+        ),
+      );
+      break;
+
+    case 2:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const QuizHistoryPage(),
+        ),
+      );
+      break;
+
+    case 3:
+      break;
   }
+}
 
   /// HEADER
   Widget _buildHeader() {
