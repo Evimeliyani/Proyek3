@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../core/app_config.dart';
 import '../core/token_storage.dart';
@@ -29,6 +30,41 @@ class UserService {
       return jsonDecode(res.body) as Map<String, dynamic>;
     } else {
       throw Exception('Gagal mengambil data user');
+    }
+  }
+
+  static Future<String> uploadProfilePhoto(File imageFile) async {
+    final token = await TokenStorage.getToken();
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Token tidak ditemukan');
+    }
+
+    final url = Uri.parse('${AppConfig.baseUrl}/profile/photo');
+
+    final request = http.MultipartRequest('POST', url);
+
+    request.headers['Accept'] = 'application/json';
+    request.headers['Authorization'] = 'Bearer $token';
+
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'photo',
+        imageFile.path,
+      ),
+    );
+
+    final response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+
+    print('UPLOAD PHOTO URL: $url');
+    print('UPLOAD PHOTO STATUS: ${response.statusCode}');
+    print('UPLOAD PHOTO BODY: $responseBody');
+
+    if (response.statusCode == 200) {
+      return responseBody;
+    } else {
+      throw Exception('Gagal upload foto profil: $responseBody');
     }
   }
 }
