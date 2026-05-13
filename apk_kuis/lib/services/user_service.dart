@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+
 import '../core/app_config.dart';
 import '../core/token_storage.dart';
 
 class UserService {
+
   static Future<Map<String, dynamic>> getMe() async {
     final token = await TokenStorage.getToken();
 
@@ -65,6 +67,35 @@ class UserService {
       return responseBody;
     } else {
       throw Exception('Gagal upload foto profil: $responseBody');
+    }
+  }
+
+  // LOGOUT
+  static Future<void> logout() async {
+    final token = await TokenStorage.getToken();
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Token tidak ditemukan');
+    }
+
+    final url = Uri.parse('${AppConfig.baseUrl}/auth/logout');
+
+    final res = await http.post(
+      url,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print('LOGOUT URL: $url');
+    print('LOGOUT STATUS: ${res.statusCode}');
+    print('LOGOUT BODY: ${res.body}');
+
+    if (res.statusCode == 200) {
+      await TokenStorage.clear();
+    } else {
+      throw Exception('Logout gagal');
     }
   }
 }

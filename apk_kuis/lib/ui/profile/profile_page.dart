@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import '../../services/user_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
 import '../home/home_page.dart';
 import '../quiz/quiz_page.dart';
 import '../quiz/quiz_history_page.dart';
+import '../auth/login_siswa_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -42,6 +44,8 @@ class _ProfilePageState extends State<ProfilePage> {
             content: Text('Foto profil berhasil disimpan'),
           ),
         );
+
+        setState(() {});
       } catch (e) {
         if (!mounted) return;
 
@@ -135,6 +139,8 @@ class _ProfilePageState extends State<ProfilePage> {
     final String kelas = user['kelas']?.toString() ?? '-';
     final String sekolah = user['sekolah']?.toString() ?? '-';
 
+    final String photo = user['profile_photo']?.toString() ?? '';
+
     return Expanded(
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(22, 10, 22, 12),
@@ -155,14 +161,22 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           child: Column(
             children: [
+
+              // FOTO PROFIL
               GestureDetector(
                 onTap: _pickImage,
                 child: CircleAvatar(
                   radius: 42,
                   backgroundColor: const Color(0xFFAFC2F2),
-                  backgroundImage:
-                      _image != null ? FileImage(_image!) : null,
-                  child: _image == null
+                  backgroundImage: _image != null
+                      ? FileImage(_image!)
+                      : (photo.isNotEmpty
+                              ? NetworkImage(
+                                  'http://10.0.167.223:8000/$photo',
+                                )
+                              : null)
+                          as ImageProvider?,
+                  child: (_image == null && photo.isEmpty)
                       ? const Icon(
                           Icons.camera_alt,
                           size: 30,
@@ -172,8 +186,24 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
 
-              const SizedBox(height: 18),
+              const SizedBox(height: 12),
 
+              // EDIT FOTO
+              TextButton(
+                onPressed: _pickImage,
+                child: const Text(
+                  'Edit Foto',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // NAMA
               Text(
                 name,
                 textAlign: TextAlign.center,
@@ -186,10 +216,58 @@ class _ProfilePageState extends State<ProfilePage> {
 
               const SizedBox(height: 24),
 
+              // DATA USER
               _buildProfileItem('Email', email),
               _buildProfileItem('Role', role),
               _buildProfileItem('Kelas', kelas),
               _buildProfileItem('Sekolah', sekolah),
+
+              const SizedBox(height: 20),
+
+              // LOGOUT BUTTON
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+
+                    await UserService.logout();
+
+                    if (!mounted) return;
+
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const LoginSiswaPage(),
+                      ),
+                      (route) => false,
+                    );
+                  },
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+
+                  icon: const Icon(
+                    Icons.logout,
+                    color: Colors.white,
+                  ),
+
+                  label: const Text(
+                    'Logout',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
