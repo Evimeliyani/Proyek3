@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../services/user_service.dart';
+
+import '../../services/task_service.dart';
+import 'task_ocr_page.dart';
 
 class QuizListPage extends StatefulWidget {
   final String categoryTitle;
@@ -10,190 +12,552 @@ class QuizListPage extends StatefulWidget {
   });
 
   @override
-  State<QuizListPage> createState() => _QuizListPageState();
+  State<QuizListPage> createState() =>
+      _QuizListPageState();
 }
 
-class _QuizListPageState extends State<QuizListPage> {
-  final List<Color> colors = const [
-    Color(0xFFF5CACA),
-    Color(0xFFD7F6D7),
-    Color(0xFFD9CCFA),
-    Color(0xFFF5E1CF),
-  ];
+class _QuizListPageState
+    extends State<QuizListPage> {
 
-  Widget _buildHeader(String sekolah) {
-    return Container(
-      width: double.infinity,
-      height: 140,
-      decoration: const BoxDecoration(
-        color: Color(0xFFAFC2F2),
-        borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(80),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 14, 18, 18),
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(
-                  Icons.arrow_circle_left_outlined,
-                  size: 28,
-                  color: Colors.black,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  sekolah,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    decoration: TextDecoration.underline,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              const Icon(
-              Icons.menu_book_rounded,
-              size: 58,
-              color: Color(0xFF2E2ED8),
-            ),
-            ],
-          ),
-        ),
-      ),
-    );
+  // =========================
+  // WARNA KATEGORI
+  // =========================
+
+  Color getMainColor() {
+
+    switch (
+        widget.categoryTitle
+            .toLowerCase()) {
+
+      case 'penjumlahan':
+        return const Color(0xFFFFD9E2);
+
+      case 'pengurangan':
+        return const Color(0xFFDDF6D7);
+
+      case 'perkalian':
+        return const Color(0xFFE9DDFF);
+
+      case 'pembagian':
+        return const Color(0xFFFFE9D9);
+
+      default:
+        return Colors.white;
+    }
   }
 
-  Widget _buildTitle() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 24, 12, 10),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          widget.categoryTitle,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            decoration: TextDecoration.underline,
-            color: Colors.black,
-          ),
-        ),
-      ),
-    );
-  }
+  IconData getIcon() {
 
-  void _openCamera(int index) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Membuka kamera ${widget.categoryTitle} ${index + 1}',
-        ),
-      ),
-    );
+    switch (
+        widget.categoryTitle
+            .toLowerCase()) {
 
-    // nanti arahkan ke halaman kamera di sini
-  }
+      case 'penjumlahan':
+        return Icons.add_rounded;
 
-  Widget _buildQuizCard(int index) {
-    final quizTitle = '${widget.categoryTitle} ${index + 1}';
+      case 'pengurangan':
+        return Icons.remove_rounded;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: () => _openCamera(index),
-        child: Container(
-          width: double.infinity,
-          height: 70,
-          decoration: BoxDecoration(
-            color: colors[index],
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.black38),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 6,
-                offset: Offset(2, 4),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              const SizedBox(width: 18),
+      case 'perkalian':
+        return Icons.close_rounded;
 
-              Expanded(
-                child: Text(
-                  quizTitle,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
+      case 'pembagian':
+        return Icons.horizontal_rule_rounded;
 
-              const Icon(
-                Icons.center_focus_strong_outlined,
-                size: 30,
-                color: Colors.black54,
-              ),
-
-              const SizedBox(width: 18),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuizList() {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(28, 16, 28, 20),
-          child: Column(
-            children: List.generate(4, (index) {
-              return _buildQuizCard(index);
-            }),
-          ),
-        ),
-      ),
-    );
+      default:
+        return Icons.quiz_rounded;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F1DD),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: UserService.getMe(),
-        builder: (context, snapshot) {
-          final data = snapshot.data ?? {};
-          final user = (data['user'] as Map<String, dynamic>?) ?? {};
-          final sekolah = user['sekolah']?.toString() ?? 'Sekolah';
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(sekolah),
-              _buildTitle(),
-              _buildQuizList(),
-            ],
-          );
-        },
+    final mainColor =
+        getMainColor();
+
+    return Scaffold(
+
+      backgroundColor:
+          const Color(0xFFFFFBEF),
+
+      body: SafeArea(
+
+        child: Column(
+
+          children: [
+
+            // =========================
+            // HEADER
+            // =========================
+
+            Container(
+
+              width: double.infinity,
+
+              padding:
+                  const EdgeInsets.only(
+                left: 24,
+                right: 24,
+                top: 28,
+                bottom: 30,
+              ),
+
+              decoration:
+                  const BoxDecoration(
+
+                color:
+                    Color(0xFFC8D3FF),
+
+                borderRadius:
+                    BorderRadius.only(
+
+                  bottomLeft:
+                      Radius.circular(
+                    42,
+                  ),
+
+                  bottomRight:
+                      Radius.circular(
+                    42,
+                  ),
+                ),
+
+                boxShadow: [
+
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 12,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+
+              child: Row(
+
+                children: [
+
+                  GestureDetector(
+
+                    onTap: () {
+                      Navigator.pop(
+                          context);
+                    },
+
+                    child: Container(
+
+                      width: 68,
+                      height: 68,
+
+                      decoration:
+                          BoxDecoration(
+
+                        color:
+                            Colors.white,
+
+                        borderRadius:
+                            BorderRadius.circular(
+                          22,
+                        ),
+                      ),
+
+                      child: const Icon(
+                        Icons.arrow_back_rounded,
+                        size: 38,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 18),
+
+                  Expanded(
+
+                    child: Text(
+
+                      widget.categoryTitle,
+
+                      overflow:
+                          TextOverflow
+                              .ellipsis,
+
+                      style:
+                          const TextStyle(
+
+                        fontSize: 34,
+
+                        fontWeight:
+                            FontWeight.w900,
+
+                        color:
+                            Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // =========================
+            // LIST SOAL
+            // =========================
+
+            Expanded(
+
+              child:
+                  FutureBuilder<List<dynamic>>(
+
+                future:
+                    TaskService
+                        .getTasksByKategori(
+                  widget.categoryTitle,
+                ),
+
+                builder:
+                    (context, snapshot) {
+
+                  // =====================
+                  // LOADING
+                  // =====================
+
+                  if (snapshot
+                          .connectionState ==
+                      ConnectionState
+                          .waiting) {
+
+                    return const Center(
+                      child:
+                          CircularProgressIndicator(),
+                    );
+                  }
+
+                  // =====================
+                  // ERROR
+                  // =====================
+
+                  if (snapshot
+                      .hasError) {
+
+                    return Center(
+
+                      child: Padding(
+
+                        padding:
+                            const EdgeInsets
+                                .all(20),
+
+                        child: Text(
+
+                          '❌ ${snapshot.error}',
+
+                          textAlign:
+                              TextAlign
+                                  .center,
+
+                          style:
+                              const TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+
+                  final tasks =
+                      snapshot.data ??
+                          [];
+
+                  // =====================
+                  // EMPTY
+                  // =====================
+
+                  if (tasks.isEmpty) {
+
+                    return const Center(
+
+                      child: Text(
+
+                        'Belum ada tugas 😊',
+
+                        style: TextStyle(
+
+                          fontSize: 24,
+
+                          fontWeight:
+                              FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+
+                    padding:
+                        const EdgeInsets.all(
+                      20,
+                    ),
+
+                    itemCount:
+                        tasks.length,
+
+                    itemBuilder:
+                        (context, index) {
+
+                      final task =
+                          tasks[index];
+
+                      return GestureDetector(
+
+                        onTap: () {
+
+                          Navigator.push(
+
+                            context,
+
+                            MaterialPageRoute(
+
+                              builder: (_) =>
+                                  TaskOcrPage(
+
+                                judul:
+                                    task[
+                                        'judul'],
+
+                                soal:
+                                    task[
+                                        'soal'],
+
+                                jawaban:
+                                    task[
+                                            'kunci_jawaban']
+                                        .toString(),
+
+                                kategori:
+                                    task[
+                                        'kategori'],
+                              ),
+                            ),
+                          );
+                        },
+
+                        child: Container(
+
+                          margin:
+                              const EdgeInsets.only(
+                            bottom: 24,
+                          ),
+
+                          padding:
+                              const EdgeInsets.all(
+                            20,
+                          ),
+
+                          decoration:
+                              BoxDecoration(
+
+                            color:
+                                mainColor,
+
+                            borderRadius:
+                                BorderRadius.circular(
+                              34,
+                            ),
+
+                            boxShadow: [
+
+                              BoxShadow(
+                                color: Colors
+                                    .black12,
+                                blurRadius: 10,
+                                offset:
+                                    const Offset(
+                                  0,
+                                  5,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          child: Row(
+
+                            children: [
+
+                              // =================
+                              // ICON
+                              // =================
+
+                              Container(
+
+                                width: 72,
+                                height: 72,
+
+                                decoration:
+                                    BoxDecoration(
+
+                                  color:
+                                      Colors.white,
+
+                                  borderRadius:
+                                      BorderRadius.circular(
+                                    22,
+                                  ),
+                                ),
+
+                                child: Icon(
+
+                                  getIcon(),
+
+                                  size: 40,
+
+                                  color:
+                                      Colors.black87,
+                                ),
+                              ),
+
+                              const SizedBox(
+                                  width: 16),
+
+                              // =================
+                              // TEXT AREA
+                              // =================
+
+                              Expanded(
+
+                                child: Column(
+
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+
+                                  mainAxisAlignment:
+                                      MainAxisAlignment
+                                          .center,
+
+                                  children: [
+
+                                    // JUDUL
+                                    Text(
+
+                                      task[
+                                          'judul'],
+
+                                      maxLines: 2,
+
+                                      overflow:
+                                          TextOverflow
+                                              .ellipsis,
+
+                                      style:
+                                          const TextStyle(
+
+                                        fontSize:
+                                            24,
+
+                                        height:
+                                            1.2,
+
+                                        fontWeight:
+                                            FontWeight
+                                                .w900,
+
+                                        color:
+                                            Colors.black87,
+                                      ),
+                                    ),
+
+                                    const SizedBox(
+                                        height:
+                                            10),
+
+                                    // SOAL
+                                    Container(
+
+                                      padding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal:
+                                            14,
+                                        vertical:
+                                            7,
+                                      ),
+
+                                      decoration:
+                                          BoxDecoration(
+
+                                        color:
+                                            Colors.white,
+
+                                        borderRadius:
+                                            BorderRadius.circular(
+                                          16,
+                                        ),
+                                      ),
+
+                                      child: Text(
+
+                                        task[
+                                            'soal'],
+
+                                        maxLines:
+                                            1,
+
+                                        overflow:
+                                            TextOverflow
+                                                .ellipsis,
+
+                                        style:
+                                            const TextStyle(
+
+                                          fontSize:
+                                              17,
+
+                                          fontWeight:
+                                              FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              const SizedBox(
+                                  width: 14),
+
+                              // =================
+                              // BUTTON
+                              // =================
+
+                              Container(
+
+                                width: 58,
+                                height: 58,
+
+                                decoration:
+                                    BoxDecoration(
+
+                                  color:
+                                      Colors.white,
+
+                                  borderRadius:
+                                      BorderRadius.circular(
+                                    18,
+                                  ),
+                                ),
+
+                                child: const Icon(
+                                  Icons
+                                      .arrow_forward_ios_rounded,
+                                  size: 24,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

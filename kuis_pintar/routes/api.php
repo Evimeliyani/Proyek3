@@ -6,6 +6,12 @@ use App\Http\Controllers\Api\AuthMobileController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\QuizResultController;
 use App\Http\Controllers\ProfilePhotoController;
+use App\Http\Controllers\Api\TaskApiController;
+
+Route::get(
+    '/student/tasks/{kategori}',
+    [TaskApiController::class, 'getTasks']
+);
 
 //upload profile
 Route::middleware('auth:sanctum')->post('/profile/photo', [ProfilePhotoController::class, 'upload']);
