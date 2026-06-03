@@ -91,7 +91,12 @@
         </div>
     </div>
 </section>
-
+@php
+$y1 = 330 - (($penjumlahan - 70) / 20) * 240;
+$y2 = 330 - (($pengurangan - 70) / 20) * 240;
+$y3 = 330 - (($perkalian - 70) / 20) * 240;
+$y4 = 330 - (($pembagian - 70) / 20) * 240;
+@endphp
 <h2 class="section-title">Grafik Quiz Matematika</h2>
 
 <section class="chart-card">
@@ -119,14 +124,20 @@
                 <text x="780" y="370">Pembagian</text>
             </g>
             <polyline fill="none" stroke="#b8c9f0" stroke-width="6"
-                      points="200,120 420,180 640,250 830,210"
+                      points="200,{{ $y1 }} 420,{{ $y2 }} 640,{{ $y3 }} 830,{{ $y4 }}"
                       stroke-linecap="round" stroke-linejoin="round" />
             <g fill="#2b60ff" stroke="#2b60ff">
-                <circle cx="200" cy="120" r="10"/>
-                <circle cx="420" cy="180" r="10"/>
-                <circle cx="640" cy="250" r="10"/>
-                <circle cx="830" cy="210" r="10"/>
+                <circle cx="200" cy="{{ $y1 }}" r="10"/>
+                <circle cx="420" cy="{{ $y2 }}" r="10"/>
+                <circle cx="640" cy="{{ $y3 }}" r="10"/>
+                <circle cx="830" cy="{{ $y4 }}" r="10"/>
             </g>
+            <g fill="#222" font-size="15" font-weight="bold">
+    <text x="180" y="{{ $y1 - 15 }}">{{ $penjumlahan }}</text>
+    <text x="400" y="{{ $y2 - 15 }}">{{ $pengurangan }}</text>
+    <text x="620" y="{{ $y3 - 15 }}">{{ $perkalian }}</text>
+    <text x="810" y="{{ $y4 - 15 }}">{{ $pembagian }}</text>
+</g>
         </svg>
     </div>
 </section>
