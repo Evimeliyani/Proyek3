@@ -17,6 +17,8 @@ Route::get(
 Route::middleware('auth:sanctum')->post('/profile/photo', [ProfilePhotoController::class, 'upload']);
 
 Route::middleware('auth:sanctum')->get('/quiz-history', [QuizController::class, 'history']);
+
+Route::middleware('auth:sanctum')->get('/task-history', [TaskApiController::class, 'history']);
 /*
 |--------------------------------------------------------------------------
 | PUBLIC API (tanpa login)

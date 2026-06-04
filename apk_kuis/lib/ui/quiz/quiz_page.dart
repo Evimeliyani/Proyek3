@@ -3,7 +3,7 @@ import '../../services/user_service.dart';
 import 'quiz_list_page.dart';
 import '../home/home_page.dart';
 import '../profile/profile_page.dart';
-import 'quiz_history_page.dart';
+import '../history/history_page.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key});
@@ -35,7 +35,7 @@ class _QuizPageState extends State<QuizPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => const QuizHistoryPage(),
+          builder: (_) => const HistoryPage(),
         ),
       );
       break;

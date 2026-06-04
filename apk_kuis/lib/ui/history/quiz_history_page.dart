@@ -4,6 +4,7 @@ import '../../services/user_service.dart';
 import '../home/home_page.dart';
 import '../profile/profile_page.dart';
 import '../quiz/quiz_page.dart';
+import 'history_page.dart';
 
 class QuizHistoryPage extends StatefulWidget {
   const QuizHistoryPage({super.key});
@@ -18,6 +19,8 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
   String schoolName = 'SDN I';
 
   int _selectedIndex = 2;
+
+  String selectedKategori = 'Semua';
 
   @override
   void initState() {
@@ -46,9 +49,9 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
         isLoading = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal memuat riwayat quiz: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Gagal memuat riwayat quiz: $e')));
     }
   }
 
@@ -91,18 +94,14 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => const HomePage(),
-          ),
+          MaterialPageRoute(builder: (_) => const HomePage()),
         );
         break;
 
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => const QuizPage(),
-          ),
+          MaterialPageRoute(builder: (_) => const QuizPage()),
         );
         break;
 
@@ -112,9 +111,7 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
       case 3:
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => const ProfilePage(),
-          ),
+          MaterialPageRoute(builder: (_) => const ProfilePage()),
         ).then((_) {
           setState(() {
             _selectedIndex = 2;
@@ -124,21 +121,80 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
     }
   }
 
+  Widget _buildFilterSection() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 22),
+    child: Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.black12,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: selectedKategori,
+            icon: const Icon(
+              Icons.keyboard_arrow_down_rounded,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            dropdownColor: Colors.white,
+            items: const [
+              DropdownMenuItem(
+                value: 'Semua',
+                child: Text('Semua'),
+              ),
+              DropdownMenuItem(
+                value: 'Penjumlahan',
+                child: Text('Penjumlahan'),
+              ),
+              DropdownMenuItem(
+                value: 'Pengurangan',
+                child: Text('Pengurangan'),
+              ),
+              DropdownMenuItem(
+                value: 'Perkalian',
+                child: Text('Perkalian'),
+              ),
+              DropdownMenuItem(
+                value: 'Pembagian',
+                child: Text('Pembagian'),
+              ),
+            ],
+            onChanged: (value) {
+              setState(() {
+                selectedKategori = value!;
+              });
+            },
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
   Widget _buildHeader(String sekolah) {
     return Container(
       width: double.infinity,
       height: 170,
       decoration: const BoxDecoration(
         color: Color(0xFFAFC2F2),
-        borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(80),
-        ),
+        borderRadius: BorderRadius.only(bottomRight: Radius.circular(80)),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
+          BoxShadow(color: Colors.black26, blurRadius: 5, offset: Offset(0, 3)),
         ],
       ),
       child: SafeArea(
@@ -147,20 +203,46 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
           padding: const EdgeInsets.fromLTRB(22, 20, 22, 18),
           child: Row(
             children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const HistoryPage()),
+                  );
+                },
+                child: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.black, width: 1.5),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.arrow_back,
+                      size: 16,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 14),
+
               Expanded(
                 child: Text(
                   sekolah,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 17,
+                    fontSize: 18,
                     fontWeight: FontWeight.w700,
                     decoration: TextDecoration.underline,
                     color: Colors.black,
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+
               const Icon(
                 Icons.menu_book_rounded,
                 size: 58,
@@ -179,7 +261,7 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
-          'Riwayat Pengerjaan',
+          'Riwayat Pengerjaan Quiz',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
@@ -203,10 +285,7 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: Colors.black54,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.black54, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.18),
@@ -257,20 +336,22 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
 
   Widget _buildHistoryList() {
     if (isLoading) {
-      return const Expanded(
-        child: Center(child: CircularProgressIndicator()),
-      );
+      return const Expanded(child: Center(child: CircularProgressIndicator()));
     }
 
-    if (quizHistory.isEmpty) {
+    final filteredHistory = selectedKategori == 'Semua'
+        ? quizHistory
+        : quizHistory.where((item) {
+            return item['kategori']?.toString().toLowerCase() ==
+                selectedKategori.toLowerCase();
+          }).toList();
+
+    if (filteredHistory.isEmpty) {
       return const Expanded(
         child: Center(
           child: Text(
             'Belum ada riwayat quiz',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
         ),
       );
@@ -281,11 +362,14 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
         padding: const EdgeInsets.symmetric(horizontal: 22),
         child: ListView.builder(
           padding: const EdgeInsets.only(top: 10, bottom: 12),
-          itemCount: quizHistory.length,
+          itemCount: filteredHistory.length,
           itemBuilder: (context, index) {
-            final item = quizHistory[index];
+            final item = filteredHistory[index];
+
             final kategori = item['kategori']?.toString() ?? '-';
+
             final score = item['score']?.toString() ?? '0';
+
             final jam = formatTime(item['taken_at']);
 
             return Padding(
@@ -320,10 +404,7 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
           elevation: 0,
           iconSize: 28,
           items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(
               icon: Icon(Icons.quiz_outlined),
               label: 'Quiz',
@@ -349,7 +430,11 @@ class _QuizHistoryPageState extends State<QuizHistoryPage> {
       body: Column(
         children: [
           _buildHeader(schoolName),
+
           _buildTitle(),
+
+          _buildFilterSection(),
+          const SizedBox(height: 10),
           _buildHistoryList(),
         ],
       ),

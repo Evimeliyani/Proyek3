@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/quiz_service.dart';
 import '../../services/user_service.dart';
 import '../quiz/detail_quiz_page.dart';
-import '../quiz/quiz_history_page.dart';
+import '../history/history_page.dart';
 import '../profile/profile_page.dart';
 import '../quiz/quiz_page.dart';
 
@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => const QuizHistoryPage(),
+            builder: (_) => const HistoryPage(),
           ),
         ).then((_) {
           setState(() {

@@ -5,7 +5,7 @@ import 'dart:io';
 
 import '../home/home_page.dart';
 import '../quiz/quiz_page.dart';
-import '../quiz/quiz_history_page.dart';
+import '../history/history_page.dart';
 import '../auth/login_siswa_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -84,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => const QuizHistoryPage(),
+            builder: (_) => const HistoryPage(),
           ),
         );
         break;
