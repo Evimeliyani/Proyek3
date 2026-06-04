@@ -5,17 +5,33 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Models\QuizResult;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // angka bisa kamu ganti sesuai kebutuhan
         $totalQuiz = Quiz::count();
-        $totalMurid = User::count(); // kalau murid beda tabel, ganti nanti
-        $kategori = 4; // kalau kamu belum punya tabel kategori, biarin statis
+        $totalMurid = User::count();
+        $kategori = 4;
 
-        return view('web.dashboard', compact('totalQuiz', 'totalMurid', 'kategori'));
+        $grafik = QuizResult::selectRaw('kategori, AVG(score) as rata_rata')
+            ->groupBy('kategori')
+            ->pluck('rata_rata', 'kategori');
+
+        $penjumlahan = round($grafik['Penjumlahan'] ?? 0, 2);
+        $pengurangan = round($grafik['Pengurangan'] ?? 0, 2);
+        $perkalian   = round($grafik['Perkalian'] ?? 0, 2);
+        $pembagian   = round($grafik['Pembagian'] ?? 0, 2);
+
+        return view('web.dashboard', compact(
+            'totalQuiz',
+            'totalMurid',
+            'kategori',
+            'penjumlahan',
+            'pengurangan',
+            'perkalian',
+            'pembagian'
+        ));
     }
 }
