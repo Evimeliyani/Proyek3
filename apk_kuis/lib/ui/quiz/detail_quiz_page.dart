@@ -18,11 +18,19 @@ class DetailQuizPage extends StatefulWidget {
 }
 
 class _DetailQuizPageState extends State<DetailQuizPage> {
+  late Future<List<dynamic>> _questionsFuture;
+
   int currentIndex = 0;
   String? selectedOption;
   int correctCount = 0;
   bool alreadyAnswered = false;
   bool isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _questionsFuture = QuestionService.getQuestions(widget.quizId);
+  }
 
   Color buttonColor(String optionKey) {
     if (selectedOption == optionKey) {
@@ -159,127 +167,142 @@ class _DetailQuizPageState extends State<DetailQuizPage> {
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future: QuestionService.getQuestions(widget.quizId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+      // Menerapkan Stack untuk menumpuk UI utama dengan Loading Overlay
+      body: Stack(
+        children: [
+          FutureBuilder<List<dynamic>>(
+            future: _questionsFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Error: ${snapshot.error}',
-                textAlign: TextAlign.center,
-              ),
-            );
-          }
-
-          final questions = snapshot.data ?? [];
-
-          if (questions.isEmpty) {
-            return const Center(
-              child: Text('Soal belum tersedia'),
-            );
-          }
-
-          final q = questions[currentIndex] as Map<String, dynamic>;
-
-          return Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFAFC2F2),
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 6,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    'Error: ${snapshot.error}',
+                    textAlign: TextAlign.center,
                   ),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Soal ${currentIndex + 1} / ${questions.length}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                );
+              }
+
+              final questions = snapshot.data ?? [];
+
+              if (questions.isEmpty) {
+                return const Center(
+                  child: Text('Soal belum tersedia'),
+                );
+              }
+
+              final q = questions[currentIndex] as Map<String, dynamic>;
+
+              return Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFAFC2F2),
+                        borderRadius: BorderRadius.circular(28),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 6,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 24),
-                      Text(
-                        q['question']?.toString() ?? '',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Level: ${q['level'] ?? '-'}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 28),
-                _answerButton(q, 'A', '${q['option_a']}', 'A'),
-                _answerButton(q, 'B', '${q['option_b']}', 'B'),
-                _answerButton(q, 'C', '${q['option_c']}', 'C'),
-                _answerButton(q, 'D', '${q['option_d']}', 'D'),
-                const Spacer(),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFE85B5B),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 28,
-                        vertical: 14,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                    onPressed: isSaving
-                        ? null
-                        : () async {
-                            await _nextQuestion(questions);
-                          },
-                    child: isSaving
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Text(
-                            currentIndex == questions.length - 1
-                                ? 'Selesai'
-                                : 'Next',
+                      child: Column(
+                        children: [
+                          Text(
+                            'Soal ${currentIndex + 1} / ${questions.length}',
                             style: const TextStyle(
-                              fontSize: 22,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          const SizedBox(height: 24),
+                          Text(
+                            q['question']?.toString() ?? '',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Level: ${q['level'] ?? '-'}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    _answerButton(q, 'A', '${q['option_a']}', 'A'),
+                    _answerButton(q, 'B', '${q['option_b']}', 'B'),
+                    _answerButton(q, 'C', '${q['option_c']}', 'C'),
+                    _answerButton(q, 'D', '${q['option_d']}', 'D'),
+                    const Spacer(),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFE85B5B),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 28,
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                        onPressed: isSaving
+                            ? null
+                            : () async {
+                                await _nextQuestion(questions);
+                              },
+                        // Loading di tombol dihapus, teks tetap tampil normal
+                        child: Text(
+                          currentIndex == questions.length - 1
+                              ? 'Selesai'
+                              : 'Next',
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          
+          // Layer Loading di tengah layar saat isSaving bernilai true
+          if (isSaving)
+            Container(
+              color: Colors.black.withOpacity(0.3), // Efek transparan gelap di background
+              child: const Center(
+                child: Card(
+                  elevation: 4,
+                  shape: CircleBorder(),
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(
+                      color: Color(0xFFE85B5B), // Warna loading disesuaikan dengan tombol selesai
+                    ),
                   ),
                 ),
-              ],
+              ),
             ),
-          );
-        },
+        ],
       ),
     );
   }
