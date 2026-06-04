@@ -5,6 +5,7 @@ import '../../services/auth_service.dart';
 import '../widgets/auth_background.dart';
 import 'register_siswa_page.dart';
 import '../splash/login_success_page.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class LoginSiswaPage extends StatefulWidget {
   const LoginSiswaPage({super.key});
@@ -16,6 +17,9 @@ class LoginSiswaPage extends StatefulWidget {
 class _LoginSiswaPageState extends State<LoginSiswaPage> {
   final emailC = TextEditingController();
   final passC = TextEditingController();
+
+  final AudioPlayer player = AudioPlayer();
+
   bool loading = false;
 
   @override
@@ -39,7 +43,11 @@ class _LoginSiswaPageState extends State<LoginSiswaPage> {
       }
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login berhasil ✅')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Login berhasil ✅')));
+
+      await player.play(AssetSource('sounds/welcome.mp3'));
 
       Navigator.pushReplacement(
         context,
@@ -47,7 +55,9 @@ class _LoginSiswaPageState extends State<LoginSiswaPage> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => loading = false);
     }
@@ -63,12 +73,21 @@ class _LoginSiswaPageState extends State<LoginSiswaPage> {
           decoration: BoxDecoration(
             color: const Color(0xFFE9ECFF),
             borderRadius: BorderRadius.circular(22),
-            boxShadow: const [BoxShadow(blurRadius: 20, offset: Offset(0, 12), color: Colors.black26)],
+            boxShadow: const [
+              BoxShadow(
+                blurRadius: 20,
+                offset: Offset(0, 12),
+                color: Colors.black26,
+              ),
+            ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Login', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+              const Text(
+                'Login',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+              ),
               const SizedBox(height: 14),
 
               _label('Email'),
@@ -86,11 +105,23 @@ class _LoginSiswaPageState extends State<LoginSiswaPage> {
                   onPressed: loading ? null : _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1877F2),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(22),
+                    ),
                   ),
                   child: loading
-                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Text('Login', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text(
+                          'Login',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                 ),
               ),
 
@@ -101,12 +132,23 @@ class _LoginSiswaPageState extends State<LoginSiswaPage> {
                   const Text('Belum memiliki akun? '),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterSiswaPage()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const RegisterSiswaPage(),
+                        ),
+                      );
                     },
-                    child: const Text('Daftar disini', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600)),
+                    child: const Text(
+                      'Daftar disini',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -115,14 +157,23 @@ class _LoginSiswaPageState extends State<LoginSiswaPage> {
   }
 
   Widget _label(String t) => Align(
-        alignment: Alignment.centerLeft,
-        child: Text(t, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-      );
+    alignment: Alignment.centerLeft,
+    child: Text(
+      t,
+      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+    ),
+  );
 
-  Widget _field({required TextEditingController controller, bool obscure = false}) {
+  Widget _field({
+    required TextEditingController controller,
+    bool obscure = false,
+  }) {
     return Container(
       margin: const EdgeInsets.only(top: 6),
-      decoration: BoxDecoration(color: const Color(0xFFDADADA), borderRadius: BorderRadius.circular(14)),
+      decoration: BoxDecoration(
+        color: const Color(0xFFDADADA),
+        borderRadius: BorderRadius.circular(14),
+      ),
       child: TextField(
         controller: controller,
         obscureText: obscure,
